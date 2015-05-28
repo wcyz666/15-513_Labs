@@ -188,7 +188,7 @@ int getByte(int x, int n) {
  */
 int divpwr2(int x, int n) {
     int bias = ((1 << n) + (~0)) & (x >> 31);
-	return (x + bias) >> n;
+    return (x + bias) >> n;
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -200,7 +200,7 @@ int divpwr2(int x, int n) {
  */
 int logicalShift(int x, int n) {
     int mask = ~(((~0) << ((~n) + 32)) << 1);
-	return (x >> n) & mask;
+    return (x >> n) & mask;
 }
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
@@ -210,7 +210,7 @@ int logicalShift(int x, int n) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return (!!x) & !((x >> 31) & 1);
+  return !((!x) | (x >> 31));
 }
 /* 
  * isLess - if x < y  then return 1, else return 0 
@@ -221,7 +221,7 @@ int isPositive(int x) {
  */
 int isLess(int x, int y) {
     int tY = ~y;
-	int signR = x + tY + 1;
+    int signR = x + tY + 1;
     int case1 = x & tY;
     int case2 = (~(x ^ y)) & signR;
     return ((case1 | case2) >> 31) & 1;
@@ -247,7 +247,7 @@ int bang(int x) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  return (!(x & (x + (~0)))) & ((!!x) & !((x >> 31) & 1));
+  return !((x & (x + (~0))) | ((!x) | (x >> 31)));
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
@@ -258,13 +258,13 @@ int isPower2(int x) {
  */
 int ilog2(int x) {
     int result = x;
-	int num;
+    int num;
     result = result | (result >> 1); 
     result = result | (result >> 2); 
     result = result | (result >> 4); 
     result = result | (result >> 8); 
     result = result | (result >> 16);
-	num = (85 << 8) + 85;  
+    num = (85 << 8) + 85;  
     num = (num << 16) + num;
     result = (result & num) + ((result >> 1) & num);
     num = (51 << 8) + 51;
@@ -302,9 +302,9 @@ unsigned float_half(unsigned uf) {
   if ((M & 3) == 3) bias = 1; 
   if (E == 255) return uf;
   if (!(E >> 1)) 
-	result = ((M >> 1) | (E << 22)) + bias;
+    result = ((M >> 1) | (E << 22)) + bias;
   else 
-	result = ((E - 1) << 23) | M;
+    result = ((E - 1) << 23) | M;
   
   return result | S;
 }
@@ -321,41 +321,41 @@ unsigned float_i2f(int x) {
   int S = 0;
   int E = 30;
   int M = 0;
-  int t = -8388609;
+  int t = 0xff7fffff;
   int pwr2 = 0x40000000;
   int tmin = 0x80000000;
   unsigned tmp;
   if (x == tmin) return 0xcf000000;
   if (x) {
- 	 if (x < 0) {
-		 S = 1;
-   		 x = -x;
- 	 }
- 	 M = x;
-  	 S = S << 31;
- 	 while (pwr2 > x) {
-     	 E = E - 1;
-  	 	 pwr2 = pwr2 >> 1;
-   	 }
-     tmp = E - 23;
-  	 if (E > 22) {
-    	 M = (M >> (tmp));
-	 	 M = M & t;
-		 tmp = x << (55 - E);
-		 if (tmp > 0x80000000){
-		 	M = M + 1;
-         }
-		 if (tmp == 0x80000000)
-			 if ((M & 1) == 1)
-				 M = M + 1;
-  	 }  
-     else {
-	 	 M = M << (23 - E);
-	 	 M = M & t;
-	 }
+      if (x < 0) {
+         S = 1;
+            x = -x;
+      }
+      M = x;
+      S = S << 31;
+      while (pwr2 > x) {
+          E = E - 1;
+          pwr2 = pwr2 >> 1;
+      }
+      tmp = E - 23;
+      if (E > 22) {
+          M = (M >> (tmp));
+          M = M & t;
+          tmp = x << (55 - E);
+          if (tmp > 0x80000000){
+             M = M + 1;
+          }
+          if (tmp == 0x80000000)
+             if ((M & 1) == 1)
+                 M = M + 1;
+      }  
+      else {
+          M = M << (23 - E);
+          M = M & t;
+      }
 
- 	 return S + ((E + 127) << 23) + M;
+      return S + ((E + 127) << 23) + M;
   }
   else
-    return 0;
+      return 0;
 }
