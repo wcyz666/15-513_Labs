@@ -301,10 +301,11 @@ unsigned float_half(unsigned uf) {
   int result = 0;
   if ((M & 3) == 3) bias = 1; 
   if (E == 255) return uf;
-  if (!(E >> 1)) 
-    result = ((M >> 1) | (E << 22)) + bias;
-  else 
+  if (E >> 1) 
     result = ((E - 1) << 23) | M;
+  else 
+	result = ((M >> 1) | (E << 22)) + bias;
+
   
   return result | S;
 }
@@ -319,7 +320,7 @@ unsigned float_half(unsigned uf) {
  */
 unsigned float_i2f(int x) {
   int S = 0;
-  int E = 30;
+  int E = 157;
   int M = 0;
   int t = 0xff7fffff;
   int pwr2 = 0x40000000;
@@ -337,24 +338,24 @@ unsigned float_i2f(int x) {
           E = E - 1;
           pwr2 = pwr2 >> 1;
       }
-      tmp = E - 23;
-      if (E > 22) {
+      tmp = E - 150;
+      if (E > 149) {
           M = (M >> (tmp));
           M = M & t;
-          tmp = x << (55 - E);
+          tmp = x << (182 - E);
           if (tmp > 0x80000000){
              M = M + 1;
           }
           if (tmp == 0x80000000)
-             if ((M & 1) == 1)
+             if (M & 1)
                  M = M + 1;
       }  
       else {
-          M = M << (23 - E);
+          M = M << (150 - E);
           M = M & t;
       }
 
-      return S + ((E + 127) << 23) + M;
+      return S + (E << 23) + M;
   }
   else
       return 0;
