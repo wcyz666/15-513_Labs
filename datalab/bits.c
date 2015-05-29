@@ -294,20 +294,17 @@ int ilog2(int x) {
  *   Rating: 4
  */
 unsigned float_half(unsigned uf) {
-  int S = uf & 0x80000000;
-  int E = (uf >> 23) & 255;
-  int M = uf & 0x7fffff;
+  unsigned SE = uf & 0xff800000;
+  unsigned E = (SE << 1);
+  int M = uf & 0x7fffffff;
   int bias = 0;
   int result = 0;
-  if ((M & 3) == 3) bias = 1; 
-  if (E == 255) return uf;
-  if (E >> 1) 
-    result = ((E - 1) << 23) | M;
+  if ((uf & 3) == 3) bias = 1; 
+  if (E == 0xff000000) return uf;
+  if (E >> 25) 
+    return (uf - 0x800000) ;
   else 
-	result = ((M >> 1) | (E << 22)) + bias;
-
-  
-  return result | S;
+	return ((M >> 1) |(SE & 0x80000000)) + bias;
 }
 /* 
  * float_i2f - Return bit-level equivalent of expression (float) x
@@ -341,19 +338,19 @@ unsigned float_i2f(int x) {
       tmp = E - 150;
       if (E > 149) {
           M = (M >> (tmp));
-          M = M & t;
           tmp = x << (182 - E);
-          if (tmp > 0x80000000){
-             M = M + 1;
-          }
-          if (tmp == 0x80000000)
-             if (M & 1)
-                 M = M + 1;
       }  
       else {
           M = M << (150 - E);
-          M = M & t;
+		  tmp = 0;
       }
+	  M = M & t;
+	  if (tmp > 0x80000000){
+           M = M + 1;
+	  }
+	  if (tmp == 0x80000000)
+		 if (M & 1)
+			 M = M + 1;
 
       return S + (E << 23) + M;
   }
