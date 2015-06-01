@@ -267,7 +267,7 @@ int ilog2(int x) {
     result = x >> num;
     num = num + ((!!(result >> 2)) << 1);
     result = x >> num;
-    return num + (!!(result >> 1)) ;
+    return num + ((result >> 1)) ;
 }
 
 /* 
