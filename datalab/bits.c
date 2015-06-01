@@ -258,30 +258,18 @@ int isPower2(int x) {
  */
 int ilog2(int x) {
     int result = x;
-    int num;
-    result = result | (result >> 1); 
-    result = result | (result >> 2); 
-    result = result | (result >> 4); 
-    result = result | (result >> 8); 
-    result = result | (result >> 16);
-    num = (85 << 8) + 85;  
-    num = (num << 16) + num;
-    result = (result & num) + ((result >> 1) & num);
-    num = (51 << 8) + 51;
-    num = (num << 16) + num;
-    result = (result & num) + ((result >> 2) & num);
-    
-    num = (15 << 8) + 15;
-    num = (num << 16) + num;
-    result = (result & num) + ((result >> 4) & num);
-    num = (255 << 16) + 255;
-    result = (result & num) + ((result >> 8) & num);
-    num = (255 << 8) + 255;
-    result = (result & num) + ((result >> 16) & num);
-    
-    
-    return result + (~0);
+    int num = 0;
+    num = ((!!(result >> 16)) << 4);
+    result = x >> num;
+    num = num + ((!!(result >> 8)) << 3);
+    result = x >> num;
+    num = num + ((!!(result >> 4)) << 2);
+    result = x >> num;
+    num = num + ((!!(result >> 2)) << 1);
+    result = x >> num;
+    return num + (!!(result >> 1)) ;
 }
+
 /* 
  * float_half - Return bit-level equivalent of expression 0.5*f for
  *   floating point argument f.
