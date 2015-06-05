@@ -1,0 +1,6 @@
+phase 1: A string, directly found in the memory.
+phase 2: Six numbers, each one doubles its predecessor.
+phase 3: A number followed by a char, followed by another number. Switch statement.
+phase 4: Two number, the first is the result of a recursive function, fed into the second.
+phase 5: A string with 6 chars. Mapped to the sum of 42.
+phase 6: Six number. Should reflect the order of the linked list.
