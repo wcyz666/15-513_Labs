@@ -54,18 +54,18 @@ CacheResult simCacheResult(CacheOptions);
 /*
  * checkSimCache - This function checks the simulated cache with the given
  * 	   tag and return a boolean value suggesting whether this is a cache 
-	   hit or miss.
- 
-	   @ lineNo. 
-	       This parameter will be changed during function call.
-		   If this is a cache hit, lineNo will store the number of the hit
-		   line. If this is a cache miss, there will be two situations.
-		       1. There exists available line for memory load. lineNo will 
-			   	  be a positive number. It equals to 
-				  [ available_line_no + 1 ].
-			   2. These is no available line and a eviction should be done.
-				  lineNo will be a negative number. It equals to
-				  [ - (lease_used_line_no + 1) ].
+ *	   hit or miss.
+ * 
+ *	   @ lineNo. 
+ *	       This parameter will be changed during function call.
+ *		   If this is a cache hit, lineNo will store the number of the hit
+ *		   line. If this is a cache miss, there will be two situations.
+ *		       1. There exists available line for memory load. lineNo will 
+ *			   	  be a positive number. It equals to 
+ *				  [ available_line_no + 1 ].
+ *			   2. These is no available line and a eviction should be done.
+ *				  lineNo will be a negative number. It equals to
+ *				  [ - (lease_used_line_no + 1) ].
  */
 boolean checkSimCache(SimCache* set, int tag, int lineCount, int* lineNo) {
 	
@@ -119,7 +119,9 @@ void freeCache(SimCache** simCache, int setCount) {
 	free(simCache);
 }
 
-
+/*  getSetIndex - This function receives address and compute the set index
+ *  	Same for getTag
+ */		
 unsigned int getSetIndex(long int addr, CacheOptions caOpt) {
 	long int mask = ~((-1l) << (caOpt.setCount + caOpt.blockSize));
 	return (unsigned int)((addr & mask) >> caOpt.blockSize);
@@ -290,7 +292,7 @@ CacheResult simCacheResult(CacheOptions caOpt) {
 			continue;
 		}
 		
-	
+		//operationId is used as leastUsed
 		++operationId; 
 
 		operation = lineBuf[1];
