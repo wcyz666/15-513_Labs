@@ -474,6 +474,7 @@ static void *coalesce(void *bp)
  * Naive method is enough...
  * My optimization cannot improve it...So keep it naive
  */
+ 
 void *mm_realloc(void *ptr, size_t size)
 {
     size_t  oldsize;
@@ -512,6 +513,27 @@ void *mm_realloc(void *ptr, size_t size)
     printf("realloc ended\n\n\n");
 #endif
     return newptr;
+}
+
+/* 
+ * calloc - Allocate a block with at least nmemb * size bytes of payload 
+ *     and fill it with 0
+ *     Very simple implementation.
+ */
+ 
+void *mm_calloc(size_t nmemb, size_t size)
+{
+	void* bp = NULL;
+	size_t asize = nmemb * size;
+	if (asize <= 0) {
+		return NULL;
+	}
+	bp = mm_malloc(asize);
+	if (bp == NULL)
+		return NULL;
+	
+	memset(bp, 0, asize);
+	return bp;
 }
 
 /* 
